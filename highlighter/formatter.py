@@ -1,12 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from PIL import Image
-from PIL import ImageDraw
+from PIL import Image, ImageDraw
 from pygments.formatters.img import ImageFormatter
 
 
 class Formatter(ImageFormatter):
-
     def format(self, tokensource, outfile):
         """
         Format ``tokensource``, an iterable of ``(tokentype, tokenstring)``
@@ -20,9 +18,9 @@ class Formatter(ImageFormatter):
         self.maxlineno = 47
         self._draw_line_numbers()
         im = Image.new(
-            'RGB',
+            "RGB",
             self._get_image_size(self.maxcharno, self.maxlineno),
-            self.background_color
+            self.background_color,
         )
         self._paint_line_number_bg(im)
         draw = ImageDraw.Draw(im)
@@ -33,8 +31,7 @@ class Formatter(ImageFormatter):
             rectw = im.size[0] - x
             for linenumber in self.hl_lines:
                 y = self._get_line_y(linenumber - 1)
-                draw.rectangle([(x, y), (x + rectw, y + recth)],
-                               fill=self.hl_color)
+                draw.rectangle([(x, y), (x + rectw, y + recth)], fill=self.hl_color)
         for pos, value, font, kw in self.drawables:
             draw.text(pos, value, font=font, **kw)
 

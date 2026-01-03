@@ -1,3 +1,3 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from .impl import make_image, get_matrix_file, get_languages
+from .impl import get_languages, get_matrix_file, make_image

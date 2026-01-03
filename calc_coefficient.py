@@ -5,7 +5,7 @@ import sys
 
 import numpy
 
-from highlighter import make_image, get_matrix_file
+from highlighter import get_matrix_file, make_image
 
 
 def find_coeffs(source_coords, target_coords):
@@ -28,9 +28,7 @@ orig = [(0, 0), (828, 0), (828, 721), (0, 721)]
 
 
 background: str = sys.argv[1]
-translated = [
-    tuple(map(int, x.split(":"))) for x in sys.argv[2:]
-]
+translated = [tuple(map(int, x.split(":"))) for x in sys.argv[2:]]
 
 out = get_matrix_file(background)
 
@@ -42,9 +40,14 @@ with open(__file__) as f:
 make_image(code, "3.png", background=background, matrix=matrix)
 
 with open(out, "w") as f:
-    json.dump({
-        "corners_original": orig,
-        "corners_translated": translated,
-        "coefficients": matrix
-    }, f, indent=2, ensure_ascii=False)
+    json.dump(
+        {
+            "corners_original": orig,
+            "corners_translated": translated,
+            "coefficients": matrix,
+        },
+        f,
+        indent=2,
+        ensure_ascii=False,
+    )
 # translated = [(38, 140), (880, 133), (880, 915), (30, 891)]

@@ -1,11 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import json
-from typing import List, Dict
+from typing import Dict, List
 
 from PIL import Image, ImageChops
 from pygments import highlight
-from pygments.lexers import guess_lexer, get_all_lexers, find_lexer_class_by_name, find_lexer_class
+from pygments.lexers import (
+    find_lexer_class,
+    find_lexer_class_by_name,
+    get_all_lexers,
+    guess_lexer,
+)
 
 from .formatter import Formatter
 
@@ -16,7 +21,7 @@ def get_formatter(dark):
             style="monokai",
             format="png",
             line_numbers=True,
-            font_name='DejaVu Sans Mono',
+            font_name="DejaVu Sans Mono",
             font_size=14,
             line_number_bg="#272822",
             line_number_fg="#888888",
@@ -26,7 +31,7 @@ def get_formatter(dark):
         style="tango",
         format="png",
         line_numbers=True,
-        font_name='DejaVu Sans Mono',
+        font_name="DejaVu Sans Mono",
         font_size=14,
         line_number_bg="#e0e0e0",
         line_number_fg="#999999",
@@ -63,10 +68,17 @@ def transform(img, img_file, background, matrix=None):
         matrix = get_matrix(background)
 
     foreground_img_raw = img
-    foreground_img_raw = foreground_img_raw.transform(background_img_raw.size, method=Image.PERSPECTIVE, data=matrix,
-                                                      resample=Image.BILINEAR, fillcolor=(255, 255, 255))
+    foreground_img_raw = foreground_img_raw.transform(
+        background_img_raw.size,
+        method=Image.PERSPECTIVE,
+        data=matrix,
+        resample=Image.BILINEAR,
+        fillcolor=(255, 255, 255),
+    )
 
-    ImageChops.multiply(foreground_img_raw, background_img_raw).convert("RGB").save(img_file)
+    ImageChops.multiply(foreground_img_raw, background_img_raw).convert("RGB").save(
+        img_file
+    )
 
 
 def make_image(content, output, lang, background, dark=False, matrix=None):
@@ -85,7 +97,5 @@ languages: List[str] = []
 
 def get_languages() -> List[str]:
     if not languages:
-        languages.extend(sorted([
-            x[0] for x in get_all_lexers()
-        ]))
+        languages.extend(sorted([x[0] for x in get_all_lexers()]))
     return languages

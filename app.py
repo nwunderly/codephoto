@@ -9,8 +9,9 @@ import time
 
 import cv2
 import dotenv
-from flask import Flask, render_template, redirect, send_from_directory, request
-from flask_wtf import FlaskForm, CSRFProtect
+from flask import Flask, redirect, render_template, request, send_from_directory
+from flask_wtf import CSRFProtect, FlaskForm
+
 # from telegram import Update
 from wtforms import StringField, TextAreaField
 from wtforms.validators import DataRequired
@@ -50,7 +51,7 @@ threading.Thread(target=camera_thread).start()
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get("FLASK_SECRET")
+app.config["SECRET_KEY"] = os.environ.get("FLASK_SECRET")
 # TG_TOKEN = os.environ.get("TG_TOKEN")
 csrf = CSRFProtect(app)
 
@@ -59,18 +60,20 @@ csrf = CSRFProtect(app)
 
 
 class MyForm(FlaskForm):
-    language = StringField('language')
+    language = StringField("language")
     code = TextAreaField("code", validators=[DataRequired()])
 
 
-@app.route('/')
+@app.route("/")
 def hello_world():
-    return render_template("input.html", languages=[]) #get_languages())
+    return render_template("input.html", languages=[])  # get_languages())
 
 
-@app.route('/upload/<path:filename>')
+@app.route("/upload/<path:filename>")
 def image(filename):
-    return send_from_directory("data_images", filename, as_attachment=('download' in request.args))
+    return send_from_directory(
+        "data_images", filename, as_attachment=("download" in request.args)
+    )
 
 
 # @app.route("/code", methods=["POST"])
@@ -96,11 +99,11 @@ def render_code_new():
     print(f"writing {txt_path}")
     with open(txt_path, "w") as fp:
         fp.write(form.code.data)
-    
+
     print(f"opening {txt_path} with gedit")
     proc = subprocess.Popen(["gedit", txt_path])
     time.sleep(2)
-    
+
     print("taking picture")
     # ret, frame = video.read()
     frame = _videocache.frame
@@ -116,7 +119,7 @@ def render_code_new():
     return redirect(f"/i/{name}")
 
 
-@app.route('/i/<path:filename>')
+@app.route("/i/<path:filename>")
 def custom_static(filename):
     path = os.path.join(IMAGE_DIR, filename + ".jpg")
     diff = os.path.relpath(path, IMAGE_DIR)
@@ -144,11 +147,11 @@ def custom_static(filename):
 #     return redirect("https://telegram.me/links_forward_bot", code=302)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     try:
         app.run()
     finally:
         print(f"Shutting down. Closing cv2 resources.")
         video.release()
-        cv2.destroyAllWindows() # Closes all OpenCV windows
+        cv2.destroyAllWindows()  # Closes all OpenCV windows

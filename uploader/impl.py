@@ -12,8 +12,8 @@ UPLOAD_DIR = "upload"
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
-s3 = boto3.resource('s3')
-bucket = s3.Bucket('codephoto')
+s3 = boto3.resource("s3")
+bucket = s3.Bucket("codephoto")
 
 
 def _gen_name(length=5):
@@ -29,7 +29,11 @@ def gen_name_uniq(length=5):
 
 
 def upload(path, filename, nickname):
-    bucket.upload_file(path, "uploads/%s.jpg" % filename, ExtraArgs={'ACL': 'public-read', 'Expires': 7})
+    bucket.upload_file(
+        path,
+        "uploads/%s.jpg" % filename,
+        ExtraArgs={"ACL": "public-read", "Expires": 7},
+    )
 
 
 def get_info(filename):

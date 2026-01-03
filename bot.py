@@ -4,11 +4,18 @@ from queue import Queue
 
 import telegram
 from telegram import Update
-from telegram.ext import Updater, Filters, MessageHandler, CallbackContext, CommandHandler, Dispatcher
+from telegram.ext import (
+    CallbackContext,
+    CommandHandler,
+    Dispatcher,
+    Filters,
+    MessageHandler,
+    Updater,
+)
 
 from highlighter import make_image
 from logic import get_random_bg
-from uploader import gen_name_uniq, UPLOAD_DIR
+from uploader import UPLOAD_DIR, gen_name_uniq
 
 
 def process_code(update: Update, context: CallbackContext):
@@ -22,7 +29,7 @@ def process_code(update: Update, context: CallbackContext):
             chat_id=update.effective_chat.id,
             photo=f,
             reply_to_message_id=update.effective_message.message_id,
-            caption="http://codephoto.ru/i/"+name
+            caption="http://codephoto.ru/i/" + name,
         )
 
 
