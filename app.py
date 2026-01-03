@@ -29,7 +29,10 @@ TEXT_DIR = "data_text"
 dotenv.load_dotenv()
 
 
-video = cv2.VideoCapture(1)
+VIDEO_SOURCE = int(os.getenv("VIDEO_SOURCE"))
+
+
+video = cv2.VideoCapture(VIDEO_SOURCE)
 if not video.isOpened():
     print("Error: Could not open video source.")
     exit()
@@ -37,18 +40,23 @@ if not video.isOpened():
 
 class _videocache:
     frame = None
+    run_thread = True
 
 
-def camera_thread():
-    while True:
+def capture_camera():
+    while _videocache.run_thread:
         ret, frame = video.read()
         if ret:
             _videocache.frame = frame
         time.sleep(0.0001)
 
+    print("Closing cv2 resources.")
+    video.release()
+    cv2.destroyAllWindows()  # Closes all OpenCV windows
 
-threading.Thread(target=camera_thread).start()
 
+camera_thread = threading.Thread(target=capture_camera)
+camera_thread.start()
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ.get("FLASK_SECRET")
@@ -152,6 +160,8 @@ if __name__ == "__main__":
     try:
         app.run()
     finally:
-        print(f"Shutting down. Closing cv2 resources.")
-        video.release()
-        cv2.destroyAllWindows()  # Closes all OpenCV windows
+        print(f"Shutting down.")
+        if camera_thread.is_alive():
+            _videocache.run_thread = False
+            camera_thread.join()
+        print("Done.")
