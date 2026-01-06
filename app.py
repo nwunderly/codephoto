@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import atexit
 import logging
 import os
 import secrets
@@ -41,18 +42,21 @@ if not video.isOpened():
 class _videocache:
     frame = None
     run_thread = True
+    cleanup_done = False
 
 
 def capture_camera():
-    while _videocache.run_thread:
-        ret, frame = video.read()
-        if ret:
-            _videocache.frame = frame
-        time.sleep(0.0001)
+    try:
+        while _videocache.run_thread:
+            ret, frame = video.read()
+            if ret:
+                _videocache.frame = frame
+            time.sleep(0.0001)
 
-    print("Closing cv2 resources.")
-    video.release()
-    cv2.destroyAllWindows()  # Closes all OpenCV windows
+    finally:
+        print("Closing cv2 resources.")
+        video.release()
+        cv2.destroyAllWindows()  # Closes all OpenCV windows
 
 
 camera_thread = threading.Thread(target=capture_camera)
@@ -155,13 +159,21 @@ def custom_static(filename):
 #     return redirect("https://telegram.me/links_forward_bot", code=302)
 
 
+def cleanup_tasks():
+    if not _videocache.cleanup_done:
+        print("Shutting down.")
+        if camera_thread.is_alive():
+            _videocache.run_thread = False
+            camera_thread.join()
+        print("Done.")
+        _videocache.cleanup_done = True
+
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     try:
         app.run()
     finally:
-        print(f"Shutting down.")
-        if camera_thread.is_alive():
-            _videocache.run_thread = False
-            camera_thread.join()
-        print("Done.")
+        cleanup_tasks()
+else:
+    atexit.register(cleanup_tasks)
