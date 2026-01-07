@@ -25,7 +25,7 @@ def test_webcam():
         print("Error: Could not open video stream or file.")
         return
 
-    print("Webcam stream started. Press 'q' to quit.")
+    print("Webcam stream started. Press ctrl-c or q to quit.")
 
     try:
         while True:
