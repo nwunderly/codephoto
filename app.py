@@ -83,13 +83,6 @@ def image(filename):
     )
 
 
-@app.route("/last")
-def last_image():
-    return send_from_directory(
-        "data_images", _videocache.last_frame, as_attachment=("download" in request.args)
-    )
-
-
 @app.route("/code", methods=["POST"])
 def render_code_new():
     form = MyForm()
@@ -117,12 +110,16 @@ def render_code_new():
     print("killing gedit")
     proc.kill()
 
+    _videocache.last_frame = name
+
     print("success!")
     return redirect(f"/i/{name}")
 
 
 @app.route("/i/<path:filename>")
 def custom_static(filename):
+    if filename == "last":
+        filename = _videocache.last_frame
     path = os.path.join(IMAGE_DIR, filename + ".jpg")
     diff = os.path.relpath(path, IMAGE_DIR)
     if diff != filename + ".jpg":
