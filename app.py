@@ -106,7 +106,7 @@ def render_code_new():
     if not form.validate():
         return redirect("/")
 
-    name = secrets.token_hex(32)
+    name = secrets.token_urlsafe(8)
     txt_path = os.path.join(TEXT_DIR, name + ".txt")
     print(f"writing {txt_path}")
     with open(txt_path, "w") as fp:
