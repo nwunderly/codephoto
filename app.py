@@ -37,7 +37,6 @@ class _videocache:
     frame = None
     run_thread = True
     cleanup_done = False
-    last_frame = "no-uploads-yet"
 
 
 def capture_camera():
@@ -72,11 +71,13 @@ class MyForm(FlaskForm):
 
 
 @app.route("/")
+@csrf.exempt
 def hello_world():
     return render_template("input.html", languages=[])  # get_languages())
 
 
 @app.route("/upload/<path:filename>")
+@csrf.exempt
 def image(filename):
     return send_from_directory(
         "data_images", filename, as_attachment=("download" in request.args)
@@ -84,6 +85,7 @@ def image(filename):
 
 
 @app.route("/code", methods=["POST"])
+@csrf.exempt
 def render_code_new():
     form = MyForm()
     if not form.validate():
@@ -110,16 +112,13 @@ def render_code_new():
     print("killing gedit")
     proc.kill()
 
-    _videocache.last_frame = name
-
     print("success!")
     return redirect(f"/i/{name}")
 
 
 @app.route("/i/<path:filename>")
+@csrf.exempt
 def custom_static(filename):
-    if filename == "last":
-        filename = _videocache.last_frame
     path = os.path.join(IMAGE_DIR, filename + ".jpg")
     diff = os.path.relpath(path, IMAGE_DIR)
     if diff != filename + ".jpg":
