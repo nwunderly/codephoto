@@ -37,6 +37,7 @@ class _videocache:
     frame = None
     run_thread = True
     cleanup_done = False
+    last_frame = "no-uploads-yet"
 
 
 def capture_camera():
@@ -79,6 +80,13 @@ def hello_world():
 def image(filename):
     return send_from_directory(
         "data_images", filename, as_attachment=("download" in request.args)
+    )
+
+
+@app.route("/last")
+def last_image():
+    return send_from_directory(
+        "data_images", _videocache.last_frame, as_attachment=("download" in request.args)
     )
 
 
