@@ -1,7 +1,0 @@
-pygments
-pillow
-gunicorn
-flask
-boto3
-Flask-WTF
-python-telegram-bot

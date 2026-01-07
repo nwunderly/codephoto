@@ -13,14 +13,8 @@ import dotenv
 from flask import Flask, redirect, render_template, request, send_from_directory
 from flask_wtf import CSRFProtect, FlaskForm
 
-# from telegram import Update
 from wtforms import StringField, TextAreaField
 from wtforms.validators import DataRequired
-
-# from bot import create_dispatcher, register_handlers
-# from highlighter import get_languages  # make_image, get_languages
-# from logic import get_random_bg
-# from uploader import gen_name_uniq, UPLOAD_DIR
 
 
 IMAGE_DIR = "data_images"
@@ -88,18 +82,6 @@ def image(filename):
     )
 
 
-# @app.route("/code", methods=["POST"])
-# def render_code():
-#     form = MyForm()
-#     if not form.validate():
-#         return redirect("/")
-#     name = gen_name_uniq(5)
-#     path = os.path.join(UPLOAD_DIR, name + ".jpg")
-#     make_image(form.code.data, path, form.language.data, background=get_random_bg())
-#     # upload(path, name, nickname)
-#     return redirect("/i/" + name)
-
-
 @app.route("/code", methods=["POST"])
 def render_code_new():
     form = MyForm()
@@ -114,7 +96,7 @@ def render_code_new():
 
     print(f"opening {txt_path} with gedit")
     proc = subprocess.Popen(["gedit", txt_path])
-    time.sleep(2)
+    time.sleep(3)
 
     print("taking picture")
     # ret, frame = video.read()
